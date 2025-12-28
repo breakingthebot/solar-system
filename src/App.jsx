@@ -3,6 +3,8 @@ import * as THREE from 'three'; // FIX: Direct Import
 
 // DATA
 const INITIAL_BODIES = [
+  // Sagittarius A* - Positioned at 12,000 units, marked isStatic to prevent orbital rotation
+  { id: 0, name: "Sagittarius A*", r: 500, dist: 12000, period: 100, color: "#ff6600", type: 'BLACK_HOLE', isStatic: false, discovery: "1974", facts: ["Supermassive black hole", "Center of Milky Way", "4 million solar masses"], trivia: "Gravity is so strong even light cannot escape." },
   { id: 1, name: "Mercury", r: 0.8, dist: 10, period: 0.24, color: "#aaaaaa", type: 'ROCKY', parentId: null, discovery: "Known by Ancients", facts: ["Smallest planet"], trivia: "Mercury has a tail!" },
   { id: 2, name: "Venus", r: 1.2, dist: 15, period: 0.61, color: "#eebb88", type: 'GAS', parentId: null, discovery: "Known by Ancients", facts: ["Hottest planet"], trivia: "Spins backwards." },
   { id: 3, name: "Earth", r: 1.3, dist: 22, period: 1.0,  color: "#2233ff", type: 'ROCKY', parentId: null, clouds: true, atmosphere: true, discovery: "N/A", facts: ["Supports Life"], trivia: "Only planet not named after a god." },
@@ -14,9 +16,29 @@ const INITIAL_BODIES = [
   { id: 9, name: "Pluto", r: 0.6, dist: 115, period: 248.0, color: "#ddccaa", type: 'ROCKY', parentId: null, discovery: "1930", facts: ["Dwarf Planet"], trivia: "Hasn't finished an orbit." },
   { id: 10, name: "Luna", r: 0.4, dist: 3, period: 0.07, color: "#ffffff", type: 'ROCKY', parentId: 3, discovery: "N/A", facts: ["Tidally Locked"], trivia: "Drifting away." },
   { id: 11, name: "Titan", r: 0.7, dist: 5, period: 0.04, color: "#ffee00", type: 'ROCKY', parentId: 6, atmosphere: true, discovery: "1655", facts: ["Thick Atmosphere"], trivia: "Liquid methane lakes." },
-  { id: 12, name: "Halley's Comet", r: 0.4, dist: 60, period: 75.0, color: "#ffffff", type: 'COMET', parentId: null, eccentricity: 0.6, discovery: "Prehistoric", facts: ["Visible every 75 yrs"], trivia: "Mark Twain connection." },
+  { id: 12, name: "Halley's Comet", r: 0.4, dist: 50.4, period: 75.3, color: "#ffffff", type: 'COMET', parentId: null, eccentricity: 0.85, discovery: "1758", facts: ["Visible every 75-76 yrs", "Highly eccentric orbit"], trivia: "Next perihelion: July 2061." },
   { id: 13, name: "I.S.S.", r: 0.15, dist: 2.5, period: 0.02, color: "#ffffff", type: 'STATION', parentId: 3, discovery: "1998", facts: ["Multinational Lab"], trivia: "Circles Earth every 90 mins." },
   { id: 14, name: "Mars Transfer", r: 0.3, dist: 26, period: 1.4, color: "#00ffff", type: 'SHIP', parentId: null, eccentricity: 0.15, discovery: "2030", facts: ["Human Crew"], trivia: "Nuclear Thermal Drive." }
+];
+
+// CONSTELLATIONS - Expanded set including the Zodiac and Deep Space patterns
+const CONSTELLATIONS = [
+  { name: "Ursa Major", color: "#ffffff", stars: [[2000, 1000, -4000], [1900, 1100, -3900], [1800, 1050, -3700], [1700, 1200, -3600], [1600, 1400, -3500], [1750, 1500, -3550], [1900, 1100, -3900]], center: [1800, 1200, -3700] },
+  { name: "Orion", color: "#aaccff", stars: [[-2500, 1500, 1500], [-2400, 1450, 1550], [-2300, 1600, 1600], [-2450, 800, 1700], [-2250, 750, 1750], [-2500, 1500, 1500], [-2450, 2000, 1400], [-2250, 1950, 1350]], center: [-2400, 1400, 1500] },
+  { name: "Cassiopeia", color: "#ffccaa", stars: [[4000, 3000, -1000], [3800, 3200, -800], [3600, 2900, -900], [3400, 3100, -700], [3200, 2800, -800]], center: [3600, 3000, -850] },
+  { name: "Aries", color: "#ffaa99", stars: [[6000, 1000, 2000], [5800, 1100, 2100], [5500, 900, 2300]], center: [5800, 1000, 2150] },
+  { name: "Taurus", color: "#ffddaa", stars: [[5000, 2000, -3000], [4800, 2200, -2800], [4600, 1800, -2600], [4400, 2400, -2400], [4200, 1600, -2200]], center: [4600, 2000, -2600] },
+  { name: "Gemini", color: "#aaffaa", stars: [[-4000, -2000, -2000], [-3800, -1800, -2200], [-4200, -2200, -1800], [-3500, -1500, -2500], [-4500, -2500, -1500]], center: [-4000, -2000, -2000] },
+  { name: "Cancer", color: "#aaaaff", stars: [[-2000, 3000, 6000], [-2100, 2800, 5800], [-1900, 3200, 6200], [-2200, 2600, 5600]], center: [-2050, 2900, 5900] },
+  { name: "Leo", color: "#ffaa00", stars: [[5000, -1000, 1000], [5200, -800, 1100], [5400, -1100, 1200], [5300, -1400, 1300], [5000, -1500, 1200], [4800, -1300, 1100]], center: [5100, -1200, 1150] },
+  { name: "Virgo", color: "#ffffff", stars: [[-6000, 0, 1000], [-5800, 200, 1200], [-5600, -200, 1400], [-5400, 400, 1600]], center: [-5600, 0, 1400] },
+  { name: "Libra", color: "#ccffaa", stars: [[0, -5000, 5000], [200, -4800, 5200], [-200, -5200, 4800]], center: [100, -4900, 5100] },
+  { name: "Scorpius", color: "#ff4444", stars: [[-1000, -3000, 5000], [-1200, -3200, 5200], [-1400, -3500, 5400], [-1300, -3800, 5600]], center: [-1200, -3500, 5300] },
+  { name: "Sagittarius", color: "#ffaa55", stars: [[3000, -3000, -5000], [3200, -2800, -5200], [2800, -3200, -4800]], center: [3000, -3000, -5000] },
+  { name: "Capricornus", color: "#aaaaaa", stars: [[-5000, -4000, 2000], [-4800, -3800, 2200], [-5200, -4200, 1800]], center: [-4900, -3900, 2100] },
+  { name: "Aquarius", color: "#77ccff", stars: [[2000, 5000, -4000], [2200, 4800, -3800], [1800, 5200, -4200]], center: [2100, 4900, -3900] },
+  { name: "Pisces", color: "#ffccff", stars: [[-1000, 6000, 3000], [-800, 5800, 3200], [-1200, 6200, 2800]], center: [-900, 5900, 3100] },
+  { name: "Andromeda", color: "#cc99ff", stars: [[-4000, 4000, -2000], [-3800, 4200, -1800], [-3600, 4100, -1600]], center: [-3700, 4150, -1700] }
 ];
 
 export default function App() {
@@ -31,13 +53,16 @@ export default function App() {
   const [showHabitable, setShowHabitable] = useState(false);
   const [tourMode, setTourMode] = useState(false);
   const [simYear, setSimYear] = useState(2025);
+  const [showGalaxy, setShowGalaxy] = useState(true);
+  const [showOort, setShowOort] = useState(true); // Oort Cloud Visibility
+  const [conLabels, setConLabels] = useState([]);
 
   const [newBody, setNewBody] = useState({ name: '', r: 0.5, dist: 5, period: 1.0, color: '#ff00ff', type: 'ROCKY', parentId: "" });
 
   const speedRef = useRef(1);
   const focusRef = useRef(null);
   const yearRef = useRef(2025);
-  const sceneRef = useRef({ planets: [], sunUniforms: { time: { value: 0 } }, sunMesh: null }); 
+  const sceneRef = useRef({ planets: [], sunUniforms: { time: { value: 0 } }, sunMesh: null, galaxyMesh: null, oortMesh: null }); 
 
   useEffect(() => { speedRef.current = timeSpeed; }, [timeSpeed]);
   useEffect(() => { focusRef.current = focusId; }, [focusId]);
@@ -77,10 +102,28 @@ export default function App() {
         const c = document.createElement('canvas');
         c.width = 512; c.height = 256;
         const ctx = c.getContext('2d');
-        const color = colorHex.replace('#','');
+        const hex = colorHex || "#000000"; // FIX: Handle undefined colorHex
+        const color = hex.replace('#','');
         const r = parseInt(color.substring(0,2), 16);
         const g = parseInt(color.substring(2,4), 16);
         const b = parseInt(color.substring(4,6), 16);
+
+        if (type === 'GALAXY') {
+            c.width = 1024; c.height = 1024;
+            ctx.fillStyle = '#020205';
+            ctx.fillRect(0, 0, 1024, 1024);
+            const grad = ctx.createRadialGradient(512, 512, 50, 512, 512, 512);
+            grad.addColorStop(0, 'rgba(60, 40, 110, 0.5)');
+            grad.addColorStop(0.4, 'rgba(20, 10, 40, 0.2)');
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1024, 1024);
+            for(let i=0; i<3000; i++) {
+                ctx.fillStyle = `rgba(255,255,255,${Math.random()})`;
+                ctx.fillRect(Math.random()*1024, Math.random()*1024, 1.5, 1.5);
+            }
+            return new THREE.CanvasTexture(c);
+        }
 
         if (type === 'CLOUDS') {
             ctx.clearRect(0,0,512,256);
@@ -96,7 +139,7 @@ export default function App() {
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(0,0,512,256);
 
-        if (type === 'ROCKY' || type === 'COMET') {
+        if (type === 'ROCKY' || type === 'COMET' || type === 'BLACK_HOLE') {
             for(let i=0; i<5000; i++) {
                 const shade = (Math.random() - 0.5) * 50;
                 ctx.fillStyle = `rgba(${r+shade},${g+shade},${b+shade}, 0.5)`;
@@ -108,17 +151,33 @@ export default function App() {
                 ctx.beginPath(); ctx.arc(Math.random()*512,Math.random()*256,s,0,Math.PI*2); ctx.fill();
             }
         } else if (type === 'GAS') {
+            // Draw atmospheric bands
             for(let i=0; i<256; i++) {
-                const shade = Math.sin(i * 0.15) * 30; 
-                ctx.fillStyle = `rgba(${r+shade},${g+shade},${b+shade}, 0.5)`;
+                const noise = Math.sin(i * 0.2) * 20; 
+                ctx.fillStyle = `rgba(${r+noise},${g+noise},${b+noise}, 1)`;
                 ctx.fillRect(0, i, 512, 1);
             }
+            
             if (options.redSpot) {
-                const sr = Math.min(255, r + 60); const sg = Math.max(0, g - 40); const sb = Math.max(0, b - 40);
-                ctx.fillStyle = `rgba(${sr},${sg},${sb}, 0.8)`; ctx.beginPath(); ctx.ellipse(350, 150, 50, 30, 0, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = `rgba(${sr-20},${sg},${sb}, 0.9)`; ctx.beginPath(); ctx.ellipse(350, 150, 30, 15, 0, 0, Math.PI*2); ctx.fill();
-            } else {
-                ctx.fillStyle = `rgba(${r+60},${g+60},${b+60}, 0.4)`; ctx.beginPath(); ctx.ellipse(350, 150, 50, 30, 0, 0, Math.PI*2); ctx.fill();
+                // Outer swirl for the storm
+                const sr = 180, sg = 60, sb = 50;
+                const spotX = 350, spotY = 130;
+                
+                // Shadow/Depth of the storm
+                ctx.fillStyle = `rgba(0,0,0,0.3)`;
+                ctx.beginPath(); ctx.ellipse(spotX + 5, spotY + 5, 45, 25, 0, 0, Math.PI*2); ctx.fill();
+
+                // Main storm body
+                const grad = ctx.createRadialGradient(spotX, spotY, 5, spotX, spotY, 40);
+                grad.addColorStop(0, `rgb(${sr+40}, ${sg+20}, ${sb})`);
+                grad.addColorStop(1, `rgb(${sr}, ${sg}, ${sb})`);
+                ctx.fillStyle = grad;
+                ctx.beginPath(); ctx.ellipse(spotX, spotY, 40, 22, 0, 0, Math.PI*2); ctx.fill();
+
+                // Inner white "eye" of the storm
+                ctx.strokeStyle = "rgba(255,255,255,0.2)";
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.ellipse(spotX, spotY, 20, 10, 0.2, 0, Math.PI*2); ctx.stroke();
             }
         }
         return new THREE.CanvasTexture(c);
@@ -143,11 +202,49 @@ export default function App() {
         // Scene
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x020205); 
-        scene.fog = new THREE.FogExp2(0x020205, 0.002);
+        scene.fog = new THREE.FogExp2(0x020205, 0.00006); 
 
-        // Camera
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
+        // Camera - Increased FAR plane to 25,000 for galactic background
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 25000);
         camera.position.set(0, 100, 200);
+
+        // Galaxy Sphere
+        const galGeo = new THREE.SphereGeometry(15000, 64, 64);
+        const galMat = new THREE.MeshBasicMaterial({ map: createTexture('GALAXY'), side: THREE.BackSide, transparent: true, opacity: 0.9 });
+        const galMesh = new THREE.Mesh(galGeo, galMat);
+        scene.add(galMesh);
+        sceneRef.current.galaxyMesh = galMesh;
+
+        // Oort Cloud - 15,000 Icy particles in a spherical shell
+        const oortGeo = new THREE.BufferGeometry();
+        const oortCount = 15000;
+        const oortPos = new Float32Array(oortCount * 3);
+        for(let i=0; i<oortCount; i++) {
+            const u = Math.random(); const v = Math.random();
+            const theta = 2 * Math.PI * u; const phi = Math.acos(2 * v - 1);
+            const r = 6000 + (Math.random() * 2000); 
+            oortPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+            oortPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+            oortPos[i*3+2] = r * Math.cos(phi);
+        }
+        oortGeo.setAttribute('position', new THREE.BufferAttribute(oortPos, 3));
+        const oortMesh = new THREE.Points(oortGeo, new THREE.PointsMaterial({ size: 1.5, color: 0x99ccff, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending }));
+        scene.add(oortMesh);
+        sceneRef.current.oortMesh = oortMesh;
+
+        // Constellation Rendering
+        const conGrp = new THREE.Group();
+        CONSTELLATIONS.forEach(con => {
+            const starsVec = con.stars.map(s => new THREE.Vector3(...s));
+            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(starsVec), new THREE.LineBasicMaterial({ color: con.color, transparent: true, opacity: 0.2 }));
+            conGrp.add(line);
+            starsVec.forEach(p => {
+                const star = new THREE.Mesh(new THREE.SphereGeometry(15, 8, 8), new THREE.MeshBasicMaterial({ color: con.color }));
+                star.position.copy(p);
+                conGrp.add(star);
+            });
+        });
+        scene.add(conGrp);
 
         // --- SUN ---
         const sunGeo = new THREE.SphereGeometry(6, 64, 64);
@@ -264,13 +361,34 @@ export default function App() {
             else if (data.type === 'COMET') {
                 geo = new THREE.IcosahedronGeometry(data.r, 0);
                 const tex = createTexture(data.type, data.color);
-                mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9, metalness: 0 });
+                mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9 });
                 mesh = new THREE.Mesh(geo, mat);
-                const tailGeo = new THREE.ConeGeometry(data.r * 0.8, data.r * 8, 16, 1, true);
+                
+                // Tail Geometry: Pointing along the Z axis
+                const tailGeo = new THREE.ConeGeometry(data.r * 0.7, data.r * 12, 16, 1, true);
+                // Rotate geometry once so the tip of the cone is the "base" at the comet
+                tailGeo.translate(0, - (data.r * 6), 0); 
                 tailGeo.rotateX(Math.PI / 2); 
-                const tailMat = new THREE.MeshBasicMaterial({ color: 0xaaccff, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+                
+                const tailMat = new THREE.MeshBasicMaterial({ 
+                    color: 0xaaccff, 
+                    transparent: true, 
+                    opacity: 0.5, 
+                    side: THREE.DoubleSide,
+                    blending: THREE.AdditiveBlending 
+                });
                 const tail = new THREE.Mesh(tailGeo, tailMat);
-                tail.position.z = -data.r * 3; tail.rotation.x = Math.PI; mesh.add(tail);
+                mesh.add(tail);
+            
+            } else if (data.type === 'BLACK_HOLE') {
+                mesh = new THREE.Group();
+                const singularity = new THREE.Mesh(new THREE.SphereGeometry(data.r * 0.4, 64, 64), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+                mesh.add(singularity);
+                const diskGeo = new THREE.RingGeometry(data.r * 0.5, data.r * 2.5, 128);
+                const diskMat = new THREE.MeshBasicMaterial({ color: data.color, side: THREE.DoubleSide, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false });
+                const accretion = new THREE.Mesh(diskGeo, diskMat);
+                accretion.rotation.x = Math.PI / 2.2; mesh.add(accretion);
+                mesh.position.set(0, 0, data.dist);
             } else {
                 geo = new THREE.SphereGeometry(data.r, 64, 64);
                 const tex = createTexture(data.type, data.color, { redSpot: data.redSpot });
@@ -306,7 +424,7 @@ export default function App() {
                 const curve = new THREE.EllipseCurve(0, 0, data.dist + (data.dist * data.eccentricity), data.dist * (1 - data.eccentricity), 0, 2 * Math.PI, false, 0);
                 const pts = curve.getPoints(100);
                 const orbGeo = new THREE.BufferGeometry().setFromPoints(pts);
-                const orbMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 }); // Brighter
+                const orbMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 }); 
                 orbitMesh = new THREE.Line(orbGeo, orbMat);
                 orbitMesh.rotation.x = Math.PI / 2;
                 orbitMesh.position.x = data.dist * data.eccentricity;
@@ -338,17 +456,11 @@ export default function App() {
         asteroids = new THREE.InstancedMesh(astGeo, astMat, astCount);
         asteroids.instanceMatrix.setUsage(THREE.DynamicDrawUsage); 
         scene.add(asteroids);
-        let asteroidData = [];
         for(let i=0; i<astCount; i++) {
             const angle = Math.random() * Math.PI * 2;
             const dist = 40 + Math.random() * 6; 
-            const spread = (Math.random() - 0.5) * 3;
-            const x = Math.cos(angle) * dist; const z = Math.sin(angle) * dist; const y = spread;
-            asteroidData.push({ x, y, z });
+            const x = Math.cos(angle) * dist; const z = Math.sin(angle) * dist; const y = (Math.random()-0.5)*3;
             asteroidDummy.position.set(x, y, z);
-            asteroidDummy.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
-            const s = 0.5 + Math.random();
-            asteroidDummy.scale.set(s,s,s);
             asteroidDummy.updateMatrix();
             asteroids.setMatrixAt(i, asteroidDummy.matrix);
         }
@@ -356,21 +468,12 @@ export default function App() {
         // Voyager
         voyagerProbe = new THREE.Group();
         voyagerProbe.add(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2), new THREE.MeshBasicMaterial({color: 0x999999})));
-        const vDish = new THREE.Mesh(new THREE.ConeGeometry(1.5, 0.5, 16, 1, true), new THREE.MeshBasicMaterial({color: 0xcccccc, side: THREE.DoubleSide}));
-        vDish.position.y = 1; vDish.rotation.x = Math.PI; voyagerProbe.add(vDish);
-        const c = document.createElement('canvas'); c.width=128; c.height=64;
-        const ctx = c.getContext('2d'); ctx.fillStyle='#000'; ctx.fillRect(0,0,128,64); ctx.fillStyle='#d4af37'; ctx.font='bold 24px Arial'; ctx.textAlign='center'; ctx.fillText('BTB-V1', 64, 40);
-        const tag = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c) }));
-        tag.scale.set(2, 1, 1); tag.position.set(0, 0, 0.6); voyagerProbe.add(tag);
         voyagerProbe.position.set(130, 5, 0); scene.add(voyagerProbe);
 
-        // --- HABITABLE ZONE RING ---
-        const hzGeo = new THREE.RingGeometry(18, 28, 64);
-        const hzMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.1, side: THREE.DoubleSide });
-        const hzMesh = new THREE.Mesh(hzGeo, hzMat);
+        // Habitable Zone
+        const hzMesh = new THREE.Mesh(new THREE.RingGeometry(18, 28, 64), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.1, side: THREE.DoubleSide }));
         hzMesh.rotation.x = Math.PI / 2; hzMesh.visible = false;
-        sceneRef.current.habitableZone = hzMesh;
-        scene.add(hzMesh);
+        sceneRef.current.habitableZone = hzMesh; scene.add(hzMesh);
 
         // --- ANIMATION LOOP ---
         const raycast = new THREE.Raycaster();
@@ -382,112 +485,99 @@ export default function App() {
             const targetId = focusRef.current; 
 
             if (sceneRef.current.sunMesh) sceneRef.current.sunMesh.rotation.y -= 0.002 * dt;
+            if (sceneRef.current.galaxyMesh) sceneRef.current.galaxyMesh.rotation.y += 0.00004 * dt;
             sceneRef.current.sunUniforms.time.value += 0.01;
 
-            if (sceneRef.current.planets) {
-                sceneRef.current.planets.forEach(p => {
+
+// COPY START
+            sceneRef.current.planets.forEach(p => {
+                if (p.data.isStatic) return; // Skip orbital logic for Sagittarius A*
+
+                // COMET TAIL FIX:
+                // Only spin the mesh if it's NOT a comet. 
+                // If it IS a comet, force it to look at the Sun (0,0,0)
+                if (p.data.type === 'COMET') {
+                    p.mesh.lookAt(0, 0, 0);
+                } else {
                     p.mesh.rotation.y += 0.01 / p.data.r;
-                    if (p.data.type === 'COMET') p.mesh.lookAt(0,0,0);
-                    if (p.data.type === 'SHIP') { p.mesh.lookAt(0,0,0); p.mesh.rotateY(Math.PI / 2); }
+                }
 
-                    const orbitalStep = (BASE_ORBITAL_SPEED / p.data.period) * dt;
-
-                    if (!p.data.parentId) {
-                        p.angle += orbitalStep;
-                        let x = Math.cos(p.angle) * p.data.dist;
-                        let z = Math.sin(p.angle) * p.data.dist;
-                        if (p.data.eccentricity) {
-                            x = Math.cos(p.angle) * p.data.dist;
-                            z = Math.sin(p.angle) * p.data.dist * (1 - p.data.eccentricity);
-                            x += p.data.dist * p.data.eccentricity;
-                        }
-                        p.mesh.position.x = x; p.mesh.position.z = z;
-                        if (!p.data.eccentricity) p.orbitMesh.position.set(0, 0, 0);
-                        if (p.data.name === "Earth") yearRef.current = 2025 + Math.floor(p.angle / (Math.PI * 2));
+                const step = (BASE_ORBITAL_SPEED / p.data.period) * dt;
+                
+                if (!p.data.parentId) {
+                    p.angle += step;
+                    let x = Math.cos(p.angle) * p.data.dist;
+                    let z = Math.sin(p.angle) * p.data.dist;
+                    if (p.data.eccentricity) {
+                        // Math: x = a * cos(t), focus offset = a * e
+                        x = Math.cos(p.angle) * p.data.dist;
+                        z = Math.sin(p.angle) * p.data.dist * (1 - p.data.eccentricity);
+                        
+                        // Widening Fix: We add a +8 buffer so the comet clears the Sun (radius 6)
+                        // This pushes the "close side" to ~8.5 units away from center
+                        const buffer = p.data.type === 'COMET' ? 12 : 0;
+                        x += (p.data.dist * p.data.eccentricity) + buffer;
+// --- UPDATED BLOCK (COPY END) ---
                     }
+                    p.mesh.position.set(x, 0, z);
+                    if (p.data.name === "Earth") yearRef.current = 2025 + Math.floor(p.angle / (Math.PI * 2));
+                }
 
-                    if (p.trailMesh) {
-                        const positions = p.trailMesh.geometry.attributes.position.array;
-                        for (let i = positions.length - 3; i >= 3; i -= 3) {
-                            positions[i] = positions[i - 3]; positions[i + 1] = positions[i - 2]; positions[i + 2] = positions[i - 1];
-                        }
-                        positions[0] = p.mesh.position.x; positions[1] = p.mesh.position.y; positions[2] = p.mesh.position.z;
-                        p.trailMesh.geometry.attributes.position.needsUpdate = true;
+                const pos = p.trailMesh.geometry.attributes.position.array;
+                for (let i = pos.length - 3; i >= 3; i -= 3) { pos[i] = pos[i-3]; pos[i+1] = pos[i-2]; pos[i+2] = pos[i-1]; }
+                pos[0] = p.mesh.position.x; pos[1] = p.mesh.position.y; pos[2] = p.mesh.position.z;
+                p.trailMesh.geometry.attributes.position.needsUpdate = true;
+            });
+// COPY END
+
+            sceneRef.current.planets.forEach(p => {
+                if (p.data.parentId) {
+                    const parent = sceneRef.current.planets.find(x => x.data.id === parseInt(p.data.parentId));
+                    if (parent) {
+                        p.angle += (BASE_ORBITAL_SPEED / p.data.period) * dt;
+                        p.mesh.position.set(parent.mesh.position.x + Math.cos(p.angle)*p.data.dist, 0, parent.mesh.position.z + Math.sin(p.angle)*p.data.dist);
+                        p.orbitMesh.position.copy(parent.mesh.position);
                     }
-                });
+                }
+            });
 
-                sceneRef.current.planets.forEach(p => {
-                    if (p.data.parentId) {
-                        const parent = sceneRef.current.planets.find(x => x.data.id === parseInt(p.data.parentId));
-                        if (parent) {
-                            const orbitalStep = (BASE_ORBITAL_SPEED / p.data.period) * dt;
-                            p.angle += orbitalStep;
-                            p.mesh.position.x = parent.mesh.position.x + Math.cos(p.angle) * p.data.dist;
-                            p.mesh.position.z = parent.mesh.position.z + Math.sin(p.angle) * p.data.dist;
-                            p.orbitMesh.position.copy(parent.mesh.position);
-                            if (p.trailMesh) {
-                                const positions = p.trailMesh.geometry.attributes.position.array;
-                                for (let i = positions.length - 3; i >= 3; i -= 3) {
-                                    positions[i] = positions[i - 3]; positions[i + 1] = positions[i - 2]; positions[i + 2] = positions[i - 1];
-                                }
-                                positions[0] = p.mesh.position.x; positions[1] = p.mesh.position.y; positions[2] = p.mesh.position.z;
-                                p.trailMesh.geometry.attributes.position.needsUpdate = true;
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Camera
-            let targetPlanet = null;
-            if (targetId) targetPlanet = sceneRef.current.planets.find(p => p.data.id === targetId);
-
+            let targetPlanet = sceneRef.current.planets.find(p => p.data.id === targetId);
             if (targetPlanet) {
-                const offsetDist = 8 + targetPlanet.data.r * 2;
-                const camX = targetPlanet.mesh.position.x + offsetDist;
-                const camZ = targetPlanet.mesh.position.z + offsetDist;
-                const camY = 5 + targetPlanet.data.r;
-                camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.05);
+                const off = 8 + targetPlanet.data.r * 2;
+                camera.position.lerp(new THREE.Vector3(targetPlanet.mesh.position.x + off, 5, targetPlanet.mesh.position.z + off), 0.05);
                 camera.lookAt(targetPlanet.mesh.position);
             } else {
-                const x = orbitTarget.x + camRadius * Math.sin(camTheta) * Math.cos(camPhi);
-                const y = orbitTarget.y + camRadius * Math.cos(camTheta);
-                const z = orbitTarget.z + camRadius * Math.sin(camTheta) * Math.sin(camPhi);
-                camera.position.lerp(new THREE.Vector3(x, y, z), 0.05);
+                camera.position.lerp(new THREE.Vector3(orbitTarget.x + camRadius * Math.sin(camTheta) * Math.cos(camPhi), orbitTarget.y + camRadius * Math.cos(camTheta), orbitTarget.z + camRadius * Math.sin(camTheta) * Math.sin(camPhi)), 0.05);
                 camera.lookAt(orbitTarget);
             }
 
+            const nLabels = CONSTELLATIONS.map(c => {
+                const v = new THREE.Vector3(...c.center);
+                v.project(camera);
+                return { name: c.name, x: (v.x * 0.5 + 0.5) * window.innerWidth, y: (-(v.y * 0.5 - 0.5)) * window.innerHeight, visible: v.z < 1 };
+            });
+            setConLabels(nLabels);
+
             if (asteroids) asteroids.rotation.y += 0.0005 * dt;
-            if (voyagerProbe) voyagerProbe.rotation.y += 0.005;
             if (Date.now() % 10 === 0) setSimYear(yearRef.current);
-
-            // Mouse
-            mVec.x = mouse.x; mVec.y = mouse.y;
-            raycast.setFromCamera(mVec, camera);
-            const meshes = sceneRef.current.planets.map(p => p.mesh);
-            const intersects = raycast.intersectObjects(meshes);
-            document.body.style.cursor = intersects.length > 0 ? 'pointer' : (focusId ? 'default' : (mouse.down ? 'grabbing' : 'grab'));
-
             renderer.render(scene, camera);
             animationId = requestAnimationFrame(animate);
         };
         animate();
 
-        // Events
         const onResize = () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); };
         const onMouseMove = (e) => {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
             if (e.buttons === 1 && !focusRef.current) { camPhi += e.movementX * 0.005; camTheta += e.movementY * 0.005; camTheta = Math.max(0.1, Math.min(Math.PI - 0.1, camTheta)); }
             else if (e.buttons === 2 && !focusRef.current) {
-                const panSpeed = camRadius * 0.001; 
-                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion); forward.y = 0; forward.normalize();
-                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion); right.y = 0; right.normalize();
-                orbitTarget.addScaledVector(right, -e.movementX * panSpeed); orbitTarget.addScaledVector(forward, e.movementY * panSpeed);
+                const pan = camRadius * 0.001; 
+                const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion); fwd.y = 0; fwd.normalize();
+                const rgt = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion); rgt.y = 0; rgt.normalize();
+                orbitTarget.addScaledVector(rgt, -e.movementX * pan); orbitTarget.addScaledVector(fwd, e.movementY * pan);
             }
         };
-        const onWheel = (e) => { if (!focusRef.current) { camRadius += e.deltaY * 0.05; camRadius = Math.max(20, Math.min(400, camRadius)); } };
+        const onWheel = (e) => { if (!focusRef.current) { camRadius += e.deltaY * 0.05; camRadius = Math.max(20, Math.min(1000, camRadius)); } };
         const onMouseDown = (e) => {
-             mouse.down = true;
              const mX = (e.clientX / window.innerWidth) * 2 - 1; const mY = -(e.clientY / window.innerHeight) * 2 + 1;
              raycast.setFromCamera({x: mX, y: mY}, camera);
              const meshes = sceneRef.current.planets.map(p => p.mesh);
@@ -499,78 +589,51 @@ export default function App() {
                  if (pData) setSelectedBody(pData);
              }
         };
-        const onMouseUp = () => { mouse.down = false; };
         const onDblClick = (e) => {
             const mX = (e.clientX / window.innerWidth) * 2 - 1; const mY = -(e.clientY / window.innerHeight) * 2 + 1;
             raycast.setFromCamera({x: mX, y: mY}, camera);
-            const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-            const target = new THREE.Vector3();
-            raycast.ray.intersectPlane(plane, target);
-            if (target) orbitTarget.copy(target);
+            const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); const target = new THREE.Vector3();
+            raycast.ray.intersectPlane(plane, target); if (target) orbitTarget.copy(target);
         };
-        const onCtx = (e) => e.preventDefault();
-
         window.addEventListener('resize', onResize); window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('wheel', onWheel); window.addEventListener('mousedown', onMouseDown);
-        window.addEventListener('mouseup', onMouseUp); window.addEventListener('dblclick', onDblClick);
-        window.addEventListener('contextmenu', onCtx);
-
-        return () => {
-            window.removeEventListener('resize', onResize); window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('wheel', onWheel); window.removeEventListener('mousedown', onMouseDown);
-            window.removeEventListener('mouseup', onMouseUp); window.removeEventListener('dblclick', onDblClick);
-            window.removeEventListener('contextmenu', onCtx);
-            cancelAnimationFrame(animationId);
-            if(renderer) { renderer.dispose(); if(mountRef.current && renderer.domElement) mountRef.current.removeChild(renderer.domElement); }
-        };
+        window.addEventListener('dblclick', onDblClick);
+        return () => { window.removeEventListener('resize', onResize); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('wheel', onWheel); window.removeEventListener('mousedown', onMouseDown); window.removeEventListener('dblclick', onDblClick); cancelAnimationFrame(animationId); renderer.dispose(); };
     };
-
     init();
   }, [bodies]); 
 
-
-  // Handlers
-  const toggleOrbit = (id) => setHiddenOrbitIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const toggleAllOrbits = () => setHiddenOrbitIds(hiddenOrbitIds.length > 0 ? [] : bodies.map(b => b.id));
-  const removeBody = (id) => setBodies(bodies.filter(b => b.id !== id));
-  const addBody = () => {
-      const id = Date.now();
-      setBodies([...bodies, { ...newBody, id, facts: ["Custom Object"], discovery: "User Created", trivia: "Generated by Architect." }]);
-  };
-
-  // Visibility effects
-  useEffect(() => {
-      if (sceneRef.current.planets) {
-          sceneRef.current.planets.forEach(p => { if (p.orbitMesh) p.orbitMesh.visible = !hiddenOrbitIds.includes(p.data.id); });
-      }
-  }, [hiddenOrbitIds]);
-
-  useEffect(() => {
-      if (sceneRef.current.habitableZone) sceneRef.current.habitableZone.visible = showHabitable;
-  }, [showHabitable]);
+  useEffect(() => { if (sceneRef.current.galaxyMesh) sceneRef.current.galaxyMesh.visible = showGalaxy; }, [showGalaxy]);
+  useEffect(() => { if (sceneRef.current.oortMesh) sceneRef.current.oortMesh.visible = showOort; }, [showOort]);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#000', overflow: 'hidden', fontFamily: 'monospace' }}>
+    <div style={{ width: '100vw', height: '100vh', background: '#000', overflow: 'hidden', fontFamily: 'monospace', position: 'relative' }}>
       <div ref={mountRef} style={{ width: '100%', height: '100%', display: 'block', cursor: focusId ? 'default' : 'crosshair' }} />
-      <div style={{ position: 'absolute', bottom: '10px', left: '10px', pointerEvents: 'none', opacity: 0.5, fontSize: '10px', color: '#555', zIndex: 9999 }}>BTB</div>
+      
+      {conLabels.map((l, i) => l.visible && (
+        <div key={i} style={{ position: 'absolute', left: l.x, top: l.y, color: '#00ffff', fontSize: '11px', fontWeight: 'bold', pointerEvents: 'none', transform: 'translate(-50%, -50%)', opacity: 0.6, textShadow: '0 0 10px #000' }}>
+          [{l.name}]
+        </div>
+      ))}
+
+      <div style={{ position: 'absolute', bottom: '10px', left: '10px', pointerEvents: 'none', opacity: 0.5, fontSize: '10px', color: '#00ffff', zIndex: 9999, border: '1px solid rgba(0,255,255,0.2)', padding: '2px 5px' }}>BTB_ARCHITECT</div>
 
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
           <div style={{ position: 'absolute', top: '20px', left: '20px', color: 'rgba(255,255,255,0.8)', fontSize: '1.2rem', fontWeight: 'bold' }}>
               EARTH YEAR: {simYear}
-              <div style={{ fontSize: '0.8rem', color: '#888', fontWeight: 'normal' }}>OBJECTS: {bodies.length} // MODE: {focusId ? 'TRACKING' : 'ORBIT'}</div>
-              <div style={{ fontSize: '0.7rem', color: '#666', marginTop: '5px' }}>R-CLICK DRAG: PAN // DBL-CLICK: RE-CENTER</div>
+              <div style={{ fontSize: '0.8rem', color: '#888', fontWeight: 'normal' }}>SECTOR: SOL // OBJECTS: {bodies.length}</div>
           </div>
           <div style={{ position: 'absolute', top: '20px', right: '20px', pointerEvents: 'auto', display: 'flex', gap: '10px' }}>
-              <button onClick={() => setTourMode(!tourMode)} style={{ background: tourMode ? '#00ffff' : '#333', color: tourMode ? '#000' : '#fff', border: '1px solid #555', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}>{tourMode ? 'STOP TOUR' : 'START TOUR'}</button>
-              <button onClick={() => setShowHabitable(!showHabitable)} style={{ background: showHabitable ? '#00ff00' : '#333', color: showHabitable ? '#000' : '#fff', border: '1px solid #555', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}>ZONE</button>
-              <button onClick={toggleAllOrbits} style={{ background: '#333', color: '#fff', border: '1px solid #555', padding: '10px', cursor: 'pointer' }}>{hiddenOrbitIds.length === 0 ? '[ O ]' : '[ x ]'}</button>
+              <button onClick={() => setTourMode(!tourMode)} style={{ background: tourMode ? '#00ffff' : '#333', color: tourMode ? '#000' : '#fff', border: '1px solid #555', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}>TOUR</button>
+              <button onClick={() => setShowGalaxy(!showGalaxy)} style={{ background: showGalaxy ? '#ff00ff' : '#333', color: '#fff', border: '1px solid #555', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}>GALAXY</button>
+              <button onClick={() => setShowOort(!showOort)} style={{ background: showOort ? '#99ccff' : '#333', color: showOort ? '#000' : '#fff', border: '1px solid #555', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}>OORT</button>
               <button onClick={() => setUiOpen(!uiOpen)} style={{ background: '#333', color: '#fff', border: '1px solid #555', padding: '10px 20px', cursor: 'pointer' }}>{uiOpen ? 'CLOSE' : 'OPEN'}</button>
           </div>
           {focusId && !tourMode && (
               <button onClick={() => setFocusId(null)} style={{ position: 'absolute', bottom: '50px', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'auto', background: 'rgba(0,255,255,0.2)', border: '1px solid #00ffff', color: '#00ffff', padding: '10px 30px', fontWeight: 'bold', cursor: 'pointer' }}>EXIT PLANET LOCK</button>
           )}
           {selectedBody && (
-              <div style={{ position: 'absolute', top: '50%', left: '40px', width: '280px', transform: 'translateY(-50%)', background: 'rgba(10, 15, 30, 0.95)', backdropFilter: 'blur(10px)', borderRadius: '12px', border: `1px solid ${selectedBody.color}`, boxShadow: `0 0 50px ${selectedBody.color}66`, padding: '20px', color: 'white', pointerEvents: 'auto', zIndex: 20 }}>
+              <div style={{ position: 'absolute', top: '50%', left: '40px', width: '280px', transform: 'translateY(-50%)', background: 'rgba(10, 15, 30, 0.95)', borderRadius: '12px', border: `1px solid ${selectedBody.color}`, boxShadow: `0 0 50px ${selectedBody.color}66`, padding: '20px', color: 'white', pointerEvents: 'auto', zIndex: 20 }}>
                   <button onClick={() => setSelectedBody(null)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#aaa', cursor: 'pointer' }}>✕</button>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
                       <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{selectedBody.name}</h2>
@@ -581,39 +644,29 @@ export default function App() {
                       <div style={{ background: 'rgba(255,255,255,0.05)', padding: '6px', textAlign: 'center' }}><div style={{color:'#fff', fontWeight:'bold'}}>PERIOD</div>{selectedBody.period} YR</div>
                       <div style={{ background: 'rgba(255,255,255,0.05)', padding: '6px', textAlign: 'center' }}><div style={{color:'#fff', fontWeight:'bold'}}>DISTANCE</div>{selectedBody.dist} AU</div>
                   </div>
-                  <ul style={{ paddingLeft: '15px', margin: '0 0 15px 0', fontSize: '0.8rem', lineHeight: '1.4', color: '#ddd' }}>{selectedBody.facts ? selectedBody.facts.map((fact, i) => <li key={i}>{fact}</li>) : <li>No data</li>}</ul>
-                  {selectedBody.trivia && <div style={{ background: `linear-gradient(45deg, ${selectedBody.color}22, transparent)`, padding: '12px', borderLeft: `3px solid ${selectedBody.color}`, fontSize: '0.8rem', fontStyle: 'italic', color: '#ccc' }}>" {selectedBody.trivia} "</div>}
-                  <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}><button onClick={() => setFocusId(selectedBody.id)} style={{ flex: 1, padding: '8px', background: selectedBody.color, border: 'none', color: '#000', fontWeight: 'bold', cursor: 'pointer', borderRadius: '4px', fontSize: '0.8rem' }}>RIDE ALONG</button></div>
+                  <ul style={{ paddingLeft: '15px', margin: '0 0 15px 0', fontSize: '0.8rem', lineHeight: '1.4', color: '#ddd' }}>
+                    {selectedBody.facts ? selectedBody.facts.map((fact, i) => <li key={i}>{fact}</li>) : <li>No data</li>}
+                  </ul>
+                  {selectedBody.trivia && (
+                    <div style={{ background: `linear-gradient(45deg, ${selectedBody.color}22, transparent)`, padding: '12px', borderLeft: `3px solid ${selectedBody.color}`, fontSize: '0.8rem', fontStyle: 'italic', color: '#ccc' }}>
+                      " {selectedBody.trivia} "
+                    </div>
+                  )}
+                  <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+                    <button onClick={() => setFocusId(selectedBody.id)} style={{ flex: 1, padding: '8px', background: selectedBody.color, border: 'none', color: '#000', fontWeight: 'bold', cursor: 'pointer', borderRadius: '4px', fontSize: '0.8rem' }}>RIDE ALONG</button>
+                  </div>
               </div>
           )}
           {uiOpen && (
               <div style={{ position: 'absolute', top: '70px', right: '20px', width: '380px', background: 'rgba(10, 10, 20, 0.95)', border: '1px solid #333', padding: '20px', pointerEvents: 'auto', maxHeight: '80vh', overflowY: 'auto' }}>
-                  <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #333' }}>
-                      <label style={{ color: '#aaa', display: 'block', marginBottom: '5px' }}>TIME WARP: {timeSpeed}x</label>
-                      <input type="range" min="0" max="10000" step="10" value={timeSpeed} onChange={e => setTimeSpeed(parseFloat(e.target.value))} style={{ width: '100%' }} />
-                  </div>
-                  <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #333' }}>
-                      <h3 style={{ color: '#fff', marginTop: 0 }}>ADD BODY</h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                          <input placeholder="Name" value={newBody.name} onChange={e => setNewBody({...newBody, name: e.target.value})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px' }} />
-                          <select value={newBody.type} onChange={e => setNewBody({...newBody, type: e.target.value})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px' }}><option value="ROCKY">ROCKY</option><option value="GAS">GAS</option><option value="COMET">COMET</option><option value="STATION">STATION</option><option value="SHIP">SHIP</option></select>
-                          <input type="number" placeholder="Radius" value={newBody.r} onChange={e => setNewBody({...newBody, r: parseFloat(e.target.value)})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px' }} />
-                          <input type="number" placeholder="Distance" value={newBody.dist} onChange={e => setNewBody({...newBody, dist: parseFloat(e.target.value)})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px' }} />
-                          <input type="number" placeholder="Period (Yrs)" value={newBody.period} onChange={e => setNewBody({...newBody, period: parseFloat(e.target.value)})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px' }} />
-                          <select value={newBody.parentId} onChange={e => setNewBody({...newBody, parentId: e.target.value})} style={{ background: '#222', border: 'none', color: '#fff', padding: '5px', gridColumn: 'span 2' }}><option value="">Orbit: Sun</option>{bodies.map(b => (<option key={b.id} value={b.id}>Orbit: {b.name}</option>))}</select>
-                          <input type="color" value={newBody.color} onChange={e => setNewBody({...newBody, color: e.target.value})} style={{ width: '100%', height: '30px', border: 'none' }} />
-                          <button onClick={addBody} style={{ background: '#00ffff', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>ADD</button>
+                  <label style={{ color: '#aaa' }}>TIME WARP: {timeSpeed}x</label>
+                  <input type="range" min="0" max="100" step="1" value={timeSpeed} onChange={e => setTimeSpeed(parseFloat(e.target.value))} style={{ width: '100%', marginBottom: '20px' }} />
+                  {bodies.map(b => (
+                      <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px' }}>
+                          <span style={{ color: '#fff' }}>{b.name}</span>
+                          <button onClick={() => setFocusId(b.id)} style={{ background: focusId === b.id ? '#00ffff' : '#333', cursor: 'pointer' }}>VIEW</button>
                       </div>
-                  </div>
-                  <div>
-                      <h3 style={{ color: '#fff', marginTop: 0 }}>SYSTEM DATA</h3>
-                      {bodies.map(b => (
-                          <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: b.color }}></div><div><div style={{ color: '#fff' }}>{b.name}</div>{b.parentId && <div style={{ color: '#00ffff', fontSize: '0.7rem' }}>Moon of ID:{b.parentId}</div>}</div></div>
-                              <div style={{ display: 'flex', gap: '5px' }}><button onClick={() => toggleOrbit(b.id)} style={{ background: 'transparent', border: '1px solid #555', color: hiddenOrbitIds.includes(b.id) ? '#555' : '#aaa', cursor: 'pointer', fontSize: '0.7rem', padding: '2px 5px' }}>[ o ]</button><button onClick={() => setFocusId(b.id)} style={{ background: focusId === b.id ? '#00ffff' : '#333', color: focusId === b.id ? '#000' : '#aaa', border: 'none', cursor: 'pointer', fontSize: '0.7rem', padding: '2px 5px' }}>{focusId === b.id ? 'LOCK' : 'VIEW'}</button><button onClick={() => removeBody(b.id)} style={{ background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>x</button></div>
-                          </div>
-                      ))}
-                  </div>
+                  ))}
               </div>
           )}
       </div>
