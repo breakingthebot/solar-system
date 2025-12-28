@@ -50,10 +50,10 @@ const INITIAL_BODIES = [
   
   // 🌪️ GAS GIANTS
   // EDIT: 'redSpot:true' draws Jupiter's storm. Remove it or add to other gas giants!
-  { id: 5, name: "Jupiter", r: 3.5, dist: 50, period: 11.86, color: "#dcbfa7", type: 'GAS', parentId: null, redSpot: true, discovery: "Known by Ancients", facts: ["Gas Giant"], trivia: "Protects Earth from asteroids." },
+  { id: 5, name: "Jupiter", r: 3.5, dist: 50, period: 11.86, color: "#a3581bff", type: 'GAS', parentId: null, redSpot: true, discovery: "Known by Ancients", facts: ["Gas Giant"], trivia: "Protects Earth from asteroids." },
   
   // EDIT: 'ring:true' adds a ring system. Try adding to other planets!
-  { id: 6, name: "Saturn", r: 3.0, dist: 68, period: 29.45, color: "#eaddca", type: 'GAS', parentId: null, ring: true, discovery: "Known by Ancients", facts: ["Ring System"], trivia: "Would float in a bathtub." },
+  { id: 6, name: "Saturn", r: 3.0, dist: 68, period: 29.45, color: "#b48134ff", type: 'GAS', parentId: null, ring: true, discovery: "Known by Ancients", facts: ["Ring System"], trivia: "Would float in a bathtub." },
   
   { id: 7, name: "Uranus", r: 2.2, dist: 85, period: 84.0, color: "#4fd0e7", type: 'GAS', parentId: null, ring: true, discovery: "1781", facts: ["Ice Giant"], trivia: "Spins on its side." },
   
@@ -66,7 +66,7 @@ const INITIAL_BODIES = [
   // EDIT: 'dist' for moons is distance from PARENT, not Sun
   { id: 10, name: "Luna", r: 0.4, dist: 3, period: 0.07, color: "#ffffff", type: 'ROCKY', parentId: 3, discovery: "N/A", facts: ["Tidally Locked"], trivia: "Drifting away." },
   
-  { id: 11, name: "Titan", r: 0.7, dist: 5, period: 0.04, color: "#ffee00", type: 'ROCKY', parentId: 6, atmosphere: true, discovery: "1655", facts: ["Thick Atmosphere"], trivia: "Liquid methane lakes." },
+  { id: 11, name: "Titan", r: 0.7, dist: 5, period: 0.04, color: "#267988ff", type: 'ROCKY', parentId: 6, atmosphere: true, discovery: "1655", facts: ["Thick Atmosphere"], trivia: "Liquid methane lakes." },
   
   // ☄️ COMET - Uses eccentric elliptical orbit
   // EDIT: 'eccentricity:0.967' = very stretched orbit (0=circle, 1=parabola)
@@ -240,7 +240,7 @@ export default function App() {
         // ROCKY/CRATERED TEXTURE
         // EDIT: Change 5000 for terrain noise density, 30 for number of craters
         if (type === 'ROCKY' || type === 'COMET' || type === 'BLACK_HOLE') {
-            for(let i=0; i<5000; i++) {
+            for(let i=0; i<10000; i++) {
                 const shade = (Math.random() - 0.5) * 50; // EDIT: Change 50 for color variation
                 ctx.fillStyle = `rgba(${r+shade},${g+shade},${b+shade}, 0.5)`;
                 ctx.fillRect(Math.random()*512, Math.random()*256, 4, 4);
@@ -269,7 +269,7 @@ export default function App() {
                 
                 // Shadow/depth
                 ctx.fillStyle = `rgba(0,0,0,0.3)`;
-                ctx.beginPath(); ctx.ellipse(spotX + 5, spotY + 5, 45, 25, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(spotX, spotY, 40, 22, 0, 0, Math.PI*2); ctx.fill();
 
                 // Main storm body
                 const grad = ctx.createRadialGradient(spotX, spotY, 5, spotX, spotY, 40);
